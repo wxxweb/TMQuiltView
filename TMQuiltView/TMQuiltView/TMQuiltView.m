@@ -493,6 +493,19 @@ NSString *const kDefaultReusableIdentifier = @"kTMQuiltViewDefaultReusableIdenti
                 break;
             }
         }
+
+        // The last cell in a column might have been harvested after our scroll view bounce.
+        // Here we check if the last cell's frame is partially in our scroll view
+        if (*bottom == [indexPaths count] - 1 && [TMQuiltView isRect:[self rectForCellAtIndex:*bottom column:i] partiallyInScrollView:self]){
+            NSIndexPath *indexPath = [indexPaths objectAtIndex:*bottom];
+            // We check, if the last cell has actually been harvested...
+            if ([indexPathToView objectForKey:indexPath] == nil) {
+                // ... and if so, we add it back
+                UIView* cell = [self.dataSource quiltView:self cellAtIndexPath:indexPath];
+                [self addSubview:cell];
+                [indexPathToView setObject:cell forKey:indexPath];
+            }
+        }
     }
 }
 
